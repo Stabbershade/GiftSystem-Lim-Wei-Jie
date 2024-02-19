@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "@types/node": "^20.11.19",
+    "chai": "^5.1.0",
+    "csv-parse": "^5.5.3",
+    "mocha": "^10.3.0"
+  }
+}
