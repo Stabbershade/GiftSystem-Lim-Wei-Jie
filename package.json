@@ -1,6 +1,8 @@
 {
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "build" : "tsc",
+    "start": "node ./dist"
   },
   "dependencies": {
     "csv-parse": "^5.5.3"

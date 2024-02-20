@@ -20,6 +20,15 @@ function searchPrompt() {
             case "lookup":
                 GiftsystemInstance.lookUpStaffToTeam(input[1])
                 break;
+            case "verify":
+                const isVerified = GiftsystemInstance.verifyRedemption(input[1])
+                if(isVerified){
+                    console.log(`Team ${input[1]} can claim the gift`)
+                }
+                else{
+                    console.log(`Team ${input[1]} had claimed the gift`)
+                }
+                break;
             case "redeem":
                 GiftsystemInstance.addNewRedemption(input[1])
                 break;
