@@ -13,10 +13,10 @@ type Redemption = {
 }
 
 class GiftSystem {
-    private staffToPassData: StaffToPass[] = []
-    private redemptionData: Redemption[] = []
+    public staffToPassData: StaffToPass[] = []
+    public redemptionData: Redemption[] = []
 
-    loadDataFromCSV(file_path: string): Promise<void> {
+    public loadDataFromCSV(file_path: string): Promise<void> {
         return new Promise((resolve, reject) => {
             const header = ["staff_pass_id", "team_name", "created_at"]
             const fileContent = fs.readFileSync(file_path, { encoding: 'utf-8' })
@@ -41,7 +41,7 @@ class GiftSystem {
         })
     }
 
-    lookUpStaffToTeam(staff_id: string): void {
+    public lookUpStaffToTeam(staff_id: string): void {
 
         const lookup = this.staffToPassData.find((staff) => {
             return staff.staff_pass_id === staff_id
@@ -55,7 +55,7 @@ class GiftSystem {
 
     }
 
-    verifyRedemption(team_name: string): boolean {
+    public verifyRedemption(team_name: string): boolean {
         const lookup = this.redemptionData.find((redeemed) => {
             return redeemed.team_name === team_name
         })
@@ -63,7 +63,7 @@ class GiftSystem {
         return !lookup
     }
 
-    addNewRedemption(team_name: string): void {
+    public addNewRedemption(team_name: string): void {
         if (this.verifyRedemption(team_name)) {
             this.redemptionData.push({
                 team_name: team_name,
@@ -76,13 +76,13 @@ class GiftSystem {
         }
     }
 
-    listRedeemed(): void {
+    public listRedeemed(): void {
         this.redemptionData.forEach((data) => {
             console.log(`${data.team_name} has redeemed gift on ${new Date(parseInt(String(data.redeemed_at)))}`)
         })
     }
 
-    RemainingTeamsToRedeem(): void {
+    public RemainingTeamsToRedeem(): void {
         let teamSet = new Set<string>()
 
         this.staffToPassData.forEach((data) => {
