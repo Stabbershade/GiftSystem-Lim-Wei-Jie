@@ -62,29 +62,29 @@ Run the prompt with a .csv file in the sample directory as an argument
 
 - Lookup on staff to team , param : staff_id
 ```bash
-  GiftSystem> lookup (staff_id)
+  GiftRedemption> lookup (staff_id)
 ```
 - Verify redemption , param : team_name
 ```bash
-  GiftSystem> verify (team_name)
+  GiftRedemption> verify (team_name)
 ```
 - New redemption , param : team_name
 ```bash
-  GiftSystem> redeem (team_name)
+  GiftRedemption> redeem (team_name)
 ```
 - Exit GiftSystem
 ```bash
-  GiftSystem> exit
+  GiftRedemption> exit
 ```
 ## Additional Features
 
 - List teams that has redeemed
 ```bash
-  GiftSystem> list 
+  GiftRedemption> list 
 ```
 - List remaining Teams to redeem
 ```bash
-  GiftSystem> left
+  GiftRedemption> left
 ```
 
 ## Running Tests
