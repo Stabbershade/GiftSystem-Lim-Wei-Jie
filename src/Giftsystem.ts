@@ -13,7 +13,7 @@ type Redemption = {
 }
 
 class GiftSystem {
-    
+
     public staffToPassData: StaffToPass[] = []
     public redemptionData: Redemption[] = []
     public teamList: Set<string> = new Set<string>()
@@ -95,7 +95,12 @@ class GiftSystem {
             }
         })
 
-        console.log(`Teams that didn't redeem yet: ${Array.from(this.teamList)}`)
+        if(this.teamList.size === 0){
+            console.log(`All teams have redeemed the gift!`)
+        }
+        else{
+            console.log(`Teams that didn't redeem yet: ${Array.from(this.teamList)}`)
+        }
     }
 
 

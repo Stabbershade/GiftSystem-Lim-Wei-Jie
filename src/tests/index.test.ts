@@ -10,7 +10,7 @@ describe("GiftSystem Test", function () {
     })
     // describe('loadDataFromCSV', () => {})
     describe("lookUpStaffToTeam()", () => {
-        test("Show teamname if staff_id exists", () => {
+        test("Return teamname if staff_id exists", () => {
             giftSystem.staffToPassData = [
                 { staff_pass_id: '1', team_name: 'TeamA', created_at: dataTime },
                 { staff_pass_id: '2', team_name: 'TeamB', created_at: dataTime }
@@ -21,7 +21,7 @@ describe("GiftSystem Test", function () {
             expect(result).toBe("TeamA");
         });
 
-        test("Show staff_id do not exist" , () => {
+        test("Return null staff_id do not exist" , () => {
           giftSystem.staffToPassData = []
 
           const result = giftSystem.lookUpStaffToTeam('3');
@@ -63,7 +63,7 @@ describe("GiftSystem Test", function () {
       });
 
       describe('addNewRedemption()', () => {
-        test('Show that team does not exist', () => {
+        test('Return null to show that team does not exist', () => {
           const verifyRedemptionStub = sinon.stub(giftSystem, 'verifyRedemption').returns(null);
     
           const result = giftSystem.addNewRedemption('TeamJ');
@@ -74,7 +74,7 @@ describe("GiftSystem Test", function () {
           verifyRedemptionStub.restore();
         });
 
-        test('Show new redemption if team has not redeemed before', () => {
+        test('Return true to show new redemption if team has not redeemed before', () => {
           const verifyRedemptionStub = sinon.stub(giftSystem, 'verifyRedemption').returns(true);
     
           const result = giftSystem.addNewRedemption('TeamB');
@@ -85,7 +85,7 @@ describe("GiftSystem Test", function () {
           verifyRedemptionStub.restore();
         });
     
-        test('Show new redemption if team has already redeemed', () => {
+        test('Return false to show if team has already redeemed', () => {
           const verifyRedemptionStub = sinon.stub(giftSystem, 'verifyRedemption').returns(false);
     
           const result = giftSystem.addNewRedemption('TeamA');
@@ -127,6 +127,25 @@ describe("GiftSystem Test", function () {
           giftSystem.RemainingTeamsToRedeem();
     
           expect(consoleSpy.calledOnceWithExactly('Teams that didn\'t redeem yet: TeamB')).toBe(true);
+    
+          consoleSpy.restore();
+        });
+
+        test('Show all teams have redeemed gift', () => {
+          giftSystem.staffToPassData = [
+            { staff_pass_id: '1', team_name: 'TeamA', created_at: dataTime },
+            { staff_pass_id: '2', team_name: 'TeamB', created_at: dataTime }
+          ];
+    
+          giftSystem.redemptionData = [
+            { team_name: 'TeamA', redeemed_at: dataTime },
+            { team_name: 'TeamB', redeemed_at: dataTime }
+          ];
+    
+          const consoleSpy = sinon.spy(console, 'log');
+          giftSystem.RemainingTeamsToRedeem();
+    
+          expect(consoleSpy.calledOnceWithExactly('All teams have redeemed the gift!')).toBe(true);
     
           consoleSpy.restore();
         });
