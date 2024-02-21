@@ -16,26 +16,33 @@ describe("GiftSystem Test", function () {
                 { staff_pass_id: '2', team_name: 'TeamB', created_at: dataTime }
             ];
 
-            const consoleSpy = sinon.spy(console, 'log');
-            giftSystem.lookUpStaffToTeam('1');
-            expect(consoleSpy.calledOnceWithExactly('1 is from team TeamA')).toBe(true);
+            const result = giftSystem.lookUpStaffToTeam('1');
 
-            consoleSpy.restore();
+            expect(result).toBe("TeamA");
         });
 
         test("Show staff_id do not exist" , () => {
-            const consoleSpy = sinon.spy(console, 'log');
+          giftSystem.staffToPassData = []
 
-            giftSystem.lookUpStaffToTeam('3');
+          const result = giftSystem.lookUpStaffToTeam('3');
 
-            expect(consoleSpy.calledOnceWithExactly('3 do not exist')).toBe(true);
-
-            consoleSpy.restore();
+          expect(result).toBeNull();
         })
     })
 
     describe('verifyRedemption()', () => {
+        test('Return null if team do not exist', () => {
+          giftSystem.teamList = new Set<string>(["TeamA"])
+          giftSystem.redemptionData = [
+            { team_name: 'TeamA', redeemed_at: dataTime }
+          ];
+    
+          const result = giftSystem.verifyRedemption('TeamB');
+          expect(result).toBeNull()
+        });
+
         test('Return true if redemption data is not found', () => {
+          giftSystem.teamList = new Set<string>(["TeamA","TeamB"])
           giftSystem.redemptionData = [
             { team_name: 'TeamA', redeemed_at: dataTime }
           ];
@@ -45,6 +52,7 @@ describe("GiftSystem Test", function () {
         });
     
         test('Return false if redemption data is found', () => {
+          giftSystem.teamList = new Set<string>(["TeamA"])
           giftSystem.redemptionData = [
             { team_name: 'TeamA', redeemed_at: dataTime }
           ];
@@ -55,30 +63,37 @@ describe("GiftSystem Test", function () {
       });
 
       describe('addNewRedemption()', () => {
-        test('Show new redemption if team has not redeemed before', () => {
-          const verifyRedemptionStub = sinon.stub(giftSystem, 'verifyRedemption').returns(true);
-          const consoleSpy = sinon.spy(console, 'log');
+        test('Show that team does not exist', () => {
+          const verifyRedemptionStub = sinon.stub(giftSystem, 'verifyRedemption').returns(null);
     
-          giftSystem.addNewRedemption('TeamB');
+          const result = giftSystem.addNewRedemption('TeamJ');
     
-          expect(giftSystem.redemptionData).toEqual([{ team_name: 'TeamB', redeemed_at: expect.any(Number) }]);
-          expect(consoleSpy.calledOnceWithExactly('Team: TeamB successfully redeemed')).toBe(true);
+          expect(giftSystem.redemptionData).toEqual([]);
+          expect(result).toBeNull()
     
           verifyRedemptionStub.restore();
-          consoleSpy.restore();
+        });
+
+        test('Show new redemption if team has not redeemed before', () => {
+          const verifyRedemptionStub = sinon.stub(giftSystem, 'verifyRedemption').returns(true);
+    
+          const result = giftSystem.addNewRedemption('TeamB');
+    
+          expect(giftSystem.redemptionData).toEqual([{ team_name: 'TeamB', redeemed_at: expect.any(Number) }]);
+          expect(result).toBe(true);
+    
+          verifyRedemptionStub.restore();
         });
     
         test('Show new redemption if team has already redeemed', () => {
           const verifyRedemptionStub = sinon.stub(giftSystem, 'verifyRedemption').returns(false);
-          const consoleSpy = sinon.spy(console, 'log');
     
-          giftSystem.addNewRedemption('TeamA');
+          const result = giftSystem.addNewRedemption('TeamA');
     
           expect(giftSystem.redemptionData).toEqual([]);
-          expect(consoleSpy.calledOnceWithExactly('Team: TeamA has already redeemed')).toBe(true);
+          expect(result).toBe(false);
     
           verifyRedemptionStub.restore();
-          consoleSpy.restore();
         });
       });
 

@@ -13,8 +13,10 @@ type Redemption = {
 }
 
 class GiftSystem {
+    
     public staffToPassData: StaffToPass[] = []
     public redemptionData: Redemption[] = []
+    public teamList: Set<string> = new Set<string>()
 
     public loadDataFromCSV(file_path: string): Promise<void> {
         return new Promise((resolve, reject) => {
@@ -30,6 +32,7 @@ class GiftSystem {
                 }
                 result.forEach((value: StaffToPass) => {
                     this.staffToPassData.push(value)
+                    this.teamList.add(value.team_name)
                 })
             }).on('end', () => {
                 console.log("Data Successfully Loaded")
@@ -41,21 +44,18 @@ class GiftSystem {
         })
     }
 
-    public lookUpStaffToTeam(staff_id: string): void {
+    public lookUpStaffToTeam(staff_id: string): string | null{
 
         const lookup = this.staffToPassData.find((staff) => {
             return staff.staff_pass_id === staff_id
         })
-        if (lookup) {
-            console.log(`${staff_id} is from team ${lookup.team_name}`)
-        }
-        else {
-            console.log(`${staff_id} do not exist`)
-        }
-
+        return lookup ? lookup.team_name : null
     }
 
-    public verifyRedemption(team_name: string): boolean {
+    public verifyRedemption(team_name: string): boolean | null{
+        if(!this.teamList.has(team_name)){
+            return null
+        }
         const lookup = this.redemptionData.find((redeemed) => {
             return redeemed.team_name === team_name
         })
@@ -63,17 +63,18 @@ class GiftSystem {
         return !lookup
     }
 
-    public addNewRedemption(team_name: string): void {
-        if (this.verifyRedemption(team_name)) {
+    public addNewRedemption(team_name: string): boolean | null{
+        if (this.verifyRedemption(team_name) == null) {
+            return null
+        }
+        if(this.verifyRedemption(team_name)){
             this.redemptionData.push({
                 team_name: team_name,
                 redeemed_at: parseInt(String(Date.now()))
             })
-            console.log(`Team: ${team_name} successfully redeemed`)
+            return true
         }
-        else {
-            console.log(`Team: ${team_name} has already redeemed`)
-        }
+        return false
     }
 
     public listRedeemed(): void {
@@ -83,19 +84,18 @@ class GiftSystem {
     }
 
     public RemainingTeamsToRedeem(): void {
-        let teamSet = new Set<string>()
 
         this.staffToPassData.forEach((data) => {
-            teamSet.add(data.team_name)
+            this.teamList.add(data.team_name)
         })
 
         this.redemptionData.forEach((data) => {
-            if (teamSet.has(data.team_name)) {
-                teamSet.delete(data.team_name)
+            if (this.teamList.has(data.team_name)) {
+                this.teamList.delete(data.team_name)
             }
         })
 
-        console.log(`Teams that didn't redeem yet: ${Array.from(teamSet)}`)
+        console.log(`Teams that didn't redeem yet: ${Array.from(this.teamList)}`)
     }
 
 
