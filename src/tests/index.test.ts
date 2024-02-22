@@ -1,5 +1,15 @@
 import GiftSystem from "../Giftsystem";
 import sinon  from "sinon";
+import * as fs from "fs"
+import * as csv from "csv-parse"
+
+jest.mock('fs', () => ({
+  readFileSync: jest.fn(),
+}));
+
+jest.mock('csv-parse', () => ({
+  parse: jest.fn(),
+}));
 
 describe("GiftSystem Test", function () {
     let giftSystem: GiftSystem
@@ -8,7 +18,24 @@ describe("GiftSystem Test", function () {
         giftSystem = new GiftSystem();
         dataTime  = parseInt(String(Date.now()))
     })
-    // describe('loadDataFromCSV', () => {})
+    describe('loadDataFromCSV',  () => {
+      test("load data from CSV file" , async() => {
+        const fakeData = 'staff_pass_id,team_name,created_at\n1,TeamA,1645344000000\n2,TeamB,1645430400000';
+        (fs.readFileSync as jest.Mock).mockReturnValue(fakeData);
+        (csv.parse as jest.Mock).mockImplementation((_, __, callback) => {
+          callback(null, [
+            { staff_pass_id: '1', team_name: 'TeamA', created_at: 1645344000000 },
+            { staff_pass_id: '2', team_name: 'TeamB', created_at: 1645430400000 },
+          ]);
+        });
+  
+        await giftSystem.loadDataFromCSV('fake_path.csv');
+  
+        expect(giftSystem.staffToPassData).toEqual([
+        { staff_pass_id: '1', team_name: 'TeamA', created_at: 1645344000000 },
+        { staff_pass_id: '2', team_name: 'TeamB', created_at: 1645430400000 },])
+      })
+    })
     describe("lookUpStaffToTeam()", () => {
         test("Return teamname if staff_id exists", () => {
             giftSystem.staffToPassData = [

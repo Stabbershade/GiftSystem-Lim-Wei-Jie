@@ -29,17 +29,15 @@ class GiftSystem {
             }, (error, result: StaffToPass[]) => {
                 if (error) {
                     console.error(error);
+                    console.log("Data unable to initilise")
+                    reject(error)
                 }
                 result.forEach((value: StaffToPass) => {
                     this.staffToPassData.push(value)
                     this.teamList.add(value.team_name)
                 })
-            }).on('end', () => {
                 console.log("Data Successfully Loaded")
                 resolve()
-            }).on('error', (err) => {
-                console.log("Data unable to initilise")
-                reject(err)
             })
         })
     }
