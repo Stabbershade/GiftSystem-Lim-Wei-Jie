@@ -18,23 +18,32 @@ describe("GiftSystem Test", function () {
         giftSystem = new GiftSystem();
         dataTime  = parseInt(String(Date.now()))
     })
-    describe('loadDataFromCSV',  () => {
+    describe('loadDataFromCSV()',  () => {
       test("load data from CSV file" , async() => {
-        const fakeData = 'staff_pass_id,team_name,created_at\n1,TeamA,1645344000000\n2,TeamB,1645430400000';
+        const fakeData = `staff_pass_id,team_name,created_at\n1,TeamA,${dataTime}\n2,TeamB,${dataTime}`;
         (fs.readFileSync as jest.Mock).mockReturnValue(fakeData);
         (csv.parse as jest.Mock).mockImplementation((_, __, callback) => {
           callback(null, [
-            { staff_pass_id: '1', team_name: 'TeamA', created_at: 1645344000000 },
-            { staff_pass_id: '2', team_name: 'TeamB', created_at: 1645430400000 },
+            { staff_pass_id: '1', team_name: 'TeamA', created_at: dataTime },
+            { staff_pass_id: '2', team_name: 'TeamB', created_at: dataTime },
           ]);
         });
   
         await giftSystem.loadDataFromCSV('fake_path.csv');
   
         expect(giftSystem.staffToPassData).toEqual([
-        { staff_pass_id: '1', team_name: 'TeamA', created_at: 1645344000000 },
-        { staff_pass_id: '2', team_name: 'TeamB', created_at: 1645430400000 },])
+        { staff_pass_id: '1', team_name: 'TeamA', created_at: dataTime },
+        { staff_pass_id: '2', team_name: 'TeamB', created_at: dataTime },])
       })
+
+      test('Error occur when data is not loaded from CSV file', async () => {
+        // Mock error during loading
+        (fs.readFileSync as jest.Mock).mockImplementation(() => {
+          throw new Error("Data unable to be loaded from file");
+        });
+    
+        await expect(giftSystem.loadDataFromCSV('fake_path.csv')).rejects.toThrow("Data unable to be loaded from file");
+      });
     })
     describe("lookUpStaffToTeam()", () => {
         test("Return teamname if staff_id exists", () => {
