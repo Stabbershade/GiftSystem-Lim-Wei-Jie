@@ -117,21 +117,19 @@ class GiftSystem {
     */
     public RemainingTeamsToRedeem(): void {
 
-        this.staffToPassData.forEach((data) => {
-            this.teamList.add(data.team_name)
-        })
+        const leftTeam = this.teamList
 
         this.redemptionData.forEach((data) => {
-            if (this.teamList.has(data.team_name)) {
-                this.teamList.delete(data.team_name)
+            if (leftTeam.has(data.team_name)) {
+                leftTeam.delete(data.team_name)
             }
         })
 
-        if(this.teamList.size === 0){
+        if(leftTeam.size === 0){
             console.log(`\nAll teams have redeemed the gift!`)
         }
         else{
-            console.log(`\nTeams that didn't redeem yet: ${Array.from(this.teamList)}`)
+            console.log(`\nTeams that didn't redeem yet: ${Array.from(leftTeam)}`)
         }
     }
 
