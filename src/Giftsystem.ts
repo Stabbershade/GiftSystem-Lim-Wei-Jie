@@ -30,7 +30,7 @@ class GiftSystem {
                 if (error) {
                     console.error(error);
                     console.log("Data unable to initilise")
-                    reject(error)
+                    reject(new Error("Data unable to be loaded from file"))
                 }
                 result.forEach((value: StaffToPass) => {
                     this.staffToPassData.push(value)
@@ -51,23 +51,25 @@ class GiftSystem {
     }
 
     public verifyRedemption(team_name: string): boolean | null{
-        if(!this.teamList.has(team_name)){
+        const UpperTeamName = team_name.toUpperCase()
+        if(!this.teamList.has(UpperTeamName)){
             return null
         }
         const lookup = this.redemptionData.find((redeemed) => {
-            return redeemed.team_name === team_name
+            return redeemed.team_name === UpperTeamName
         })
 
         return !lookup
     }
 
     public addNewRedemption(team_name: string): boolean | null{
-        if (this.verifyRedemption(team_name) == null) {
+        const UpperTeamName = team_name.toUpperCase()
+        if (this.verifyRedemption(UpperTeamName) == null) {
             return null
         }
-        if(this.verifyRedemption(team_name)){
+        if(this.verifyRedemption(UpperTeamName)){
             this.redemptionData.push({
-                team_name: team_name,
+                team_name: UpperTeamName,
                 redeemed_at: parseInt(String(Date.now()))
             })
             return true
@@ -76,6 +78,7 @@ class GiftSystem {
     }
 
     public listRedeemed(): void {
+        console.log("\n")
         this.redemptionData.forEach((data) => {
             console.log(`${data.team_name} has redeemed gift on ${new Date(parseInt(String(data.redeemed_at)))}`)
         })
@@ -94,10 +97,10 @@ class GiftSystem {
         })
 
         if(this.teamList.size === 0){
-            console.log(`All teams have redeemed the gift!`)
+            console.log(`\nAll teams have redeemed the gift!`)
         }
         else{
-            console.log(`Teams that didn't redeem yet: ${Array.from(this.teamList)}`)
+            console.log(`\nTeams that didn't redeem yet: ${Array.from(this.teamList)}`)
         }
     }
 
