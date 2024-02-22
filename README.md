@@ -32,7 +32,7 @@ Dependencies to be installed:
 Clone the project
 
 ```bash
-  git clone https://github.com/Stabbershade/GiftSystem.git
+  git clone https://github.com/Stabbershade/GiftSystem-Lim-Wei-Jie.git
 ```
 
 Go to the project directory
