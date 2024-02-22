@@ -18,6 +18,11 @@ class GiftSystem {
     public redemptionData: Redemption[] = []
     public teamList: Set<string> = new Set<string>()
 
+    /* 
+	* @brief: Load Data from CSV with the header of staff_pass_id, team_name, created_at
+    * @param: file_path: valid .csv file that is in the sample folder.
+    * @return: Return a promise so that data is preloaded before prompting user action
+    */
     public loadDataFromCSV(file_path: string): Promise<void> {
         return new Promise((resolve, reject) => {
             const header = ["staff_pass_id", "team_name", "created_at"]
@@ -42,14 +47,27 @@ class GiftSystem {
         })
     }
 
+    /* 
+	* @brief: Perform lookup with staff_id to team_name
+    * @param: staff_id: valid staff_id, doesnt matter if lower case.
+    * @return: Return either the mapped team_name or 
+    *          Return null for invalid staff_id
+    */
     public lookUpStaffToTeam(staff_id: string): string | null{
-
+        const UpperStaffId = staff_id.toUpperCase()
         const lookup = this.staffToPassData.find((staff) => {
-            return staff.staff_pass_id === staff_id
+            return staff.staff_pass_id === UpperStaffId
         })
         return lookup ? lookup.team_name : null
     }
 
+    /* 
+	* @brief: Perform verification whether specify team is able to claim gift 
+    * @param: team_name: valid team_name, doesnt matter if lower case.
+    * @return: Return True for the mapped team_name that is able to claim gift or 
+    *          Return False for the mapped team_name that is unable to claim gift
+    *          Return null for invalid team_name
+    */
     public verifyRedemption(team_name: string): boolean | null{
         const UpperTeamName = team_name.toUpperCase()
         if(!this.teamList.has(UpperTeamName)){
@@ -62,6 +80,13 @@ class GiftSystem {
         return !lookup
     }
 
+    /* 
+	* @brief: Perform operation of adding new redemption to database 
+    * @param: team_name: valid team_name, doesnt matter if lower case.
+    * @return: Return True for the mapped team_name that redeem the gift or 
+    *          Return False for the mapped team_name that redeemed the gift before
+    *          Return null for invalid team_name
+    */
     public addNewRedemption(team_name: string): boolean | null{
         const UpperTeamName = team_name.toUpperCase()
         if (this.verifyRedemption(UpperTeamName) == null) {
@@ -77,6 +102,9 @@ class GiftSystem {
         return false
     }
 
+    /* 
+	* @brief: List down all the teams that have redeemed gift with timestamp
+    */
     public listRedeemed(): void {
         console.log("\n")
         this.redemptionData.forEach((data) => {
@@ -84,6 +112,9 @@ class GiftSystem {
         })
     }
 
+    /* 
+	* @brief: List down all remaining teams that haven't redeemed gift
+    */
     public RemainingTeamsToRedeem(): void {
 
         this.staffToPassData.forEach((data) => {
